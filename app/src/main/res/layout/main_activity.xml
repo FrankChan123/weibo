@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_gray"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divider_gray"/>
+
+    <RadioGroup
+        android:id="@+id/rg_tab"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#fafafa">
+
+        <RadioButton
+            android:id="@+id/rb_home"
+            style="@style/Tab_radio_button"
+            android:checked="true"
+            android:drawableTop="@drawable/icon_home_sel"
+            android:text="@string/tab_home"/>
+
+        <RadioButton
+            android:id="@+id/rb_message"
+            style="@style/Tab_radio_button"
+            android:drawableTop="@drawable/icon_message_sel"
+            android:text="@string/tab_message"/>
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/icon_add_sel"
+            android:background="@drawable/add_bg_sel"/>
+
+        <RadioButton
+            android:id="@+id/rb_square"
+            style="@style/Tab_radio_button"
+            android:drawableTop="@drawable/icon_square_sel"
+            android:text="@string/tab_square"/>
+
+        <RadioButton
+            android:id="@+id/rb_myInfo"
+            style="@style/Tab_radio_button"
+            android:drawableTop="@drawable/icon_myinfo_sel"
+            android:text="@string/tab_myInfo"/>
+
+    </RadioGroup>
+
+</LinearLayout>

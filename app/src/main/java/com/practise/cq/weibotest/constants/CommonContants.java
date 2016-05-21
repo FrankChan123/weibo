@@ -6,5 +6,9 @@ package com.practise.cq.weibotest.constants;
  */
 public class CommonContants {
 
+    public static final String SP_NAME = "sp_config";
+    public static final int WHAT_INTENT2MAIN = 1;
+    public static final int WHAT_INTENT2LOGIN = 2;
+    public static final int SPLASH_DUR = 1000;
 
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_card_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white2gray_sel"
+    android:orientation="vertical" >
+
+
+    <!--引入微博发布者基本信息布局-->
+    <include layout="@layout/include_avatar" />
+
+    <!--发布微博内容-->
+    <TextView
+        android:id="@+id/tv_content"
+        style="@style/TextViewBody"
+        android:layout_width="match_parent"
+        android:text="从前有个人来到了油坊桥,后来他变成了陈小光"
+        android:layout_marginTop="-16dp"
+        android:padding="16dp" />
+
+    <!--发布微博图片-->
+    <include
+        android:id="@+id/include_status_image"
+        layout="@layout/include_status_image"
+        android:visibility="gone" />
+
+    <!--转发微博内容-->
+    <include
+        android:id="@+id/include_retweeted_status"
+        layout="@layout/include_retweeted_status"
+        android:visibility="gone" />
+
+    <!--底部操作栏：“转发”，“评论”，“赞”-->
+    <include
+        android:id="@+id/ll_bottom_control"
+        layout="@layout/include_status_controlbar" />
+
+</LinearLayout>

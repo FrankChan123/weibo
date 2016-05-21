@@ -16,10 +16,10 @@
 
 package com.sina.weibo.sdk.openapi.models;
 
+import android.text.TextUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.text.TextUtils;
 
 /**
  * 地理信息结构体。
@@ -28,7 +28,7 @@ import android.text.TextUtils;
  * @since 2013-11-24
  */
 public class Geo {
-    
+
     /** 经度坐标 */
     public String longitude;
     /** 维度坐标 */

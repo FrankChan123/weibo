@@ -9,9 +9,9 @@ import android.widget.Toast;
  */
 public class ToastUtil {
 
-    private Toast mToast;
+    public static Toast mToast;
 
-    public void show(Context context, CharSequence text, int duration){
+    public static void show(Context context, CharSequence text, int duration){
         if (mToast == null){
             mToast = Toast.makeText(context, text, duration);
         }else {

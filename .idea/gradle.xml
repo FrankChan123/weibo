@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/pulltorefresh" />
+            <option value="$PROJECT_DIR$/refreshlibrary" />
             <option value="$PROJECT_DIR$/weiboSDK" />
             <option value="$PROJECT_DIR$/weiboSDKDemo" />
           </set>
@@ -18,6 +20,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/pulltorefresh" />
+            <option value="$PROJECT_DIR$/refreshlibrary" />
             <option value="$PROJECT_DIR$/weiboSDK" />
             <option value="$PROJECT_DIR$/weiboSDKDemo" />
           </set>
