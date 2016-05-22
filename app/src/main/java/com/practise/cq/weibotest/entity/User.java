@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class User implements Serializable{
 
     /** 用户UID（int64） */
-    public String id;
+    public long id;
     /** 字符串型的用户 UID */
     public String idstr;
     /** 用户昵称 */
@@ -79,11 +79,11 @@ public class User implements Serializable{
     /** 用户当前的语言版本，zh-cn：简体中文，zh-tw：繁体中文，en：英语 */
     public String lang;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -368,7 +368,7 @@ public class User implements Serializable{
         }
 
         User user = new User();
-        user.id                 = jsonObject.optString("id", "");
+        user.id                 = jsonObject.optLong("id", -1);
         user.idstr              = jsonObject.optString("idstr", "");
         user.screen_name        = jsonObject.optString("screen_name", "");
         user.name               = jsonObject.optString("name", "");

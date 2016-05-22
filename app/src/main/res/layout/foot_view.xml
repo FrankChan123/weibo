@@ -6,6 +6,7 @@
     android:orientation="horizontal" >
 
     <ProgressBar
+        android:id="@+id/load_progress"
         android:layout_width="24dp"
         android:layout_height="24dp" />
 

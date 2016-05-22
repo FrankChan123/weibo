@@ -1,6 +1,7 @@
 package com.practise.cq.weibotest.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.practise.cq.weibotest.R;
+import com.practise.cq.weibotest.activity.StatusDetailActivity;
+import com.practise.cq.weibotest.activity.WriteCommentActivity;
 import com.practise.cq.weibotest.entity.Status;
 import com.practise.cq.weibotest.entity.User;
 import com.practise.cq.weibotest.util.DateUtils;
+import com.practise.cq.weibotest.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +63,7 @@ public class StatusAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
         if (convertView == null){
             holder = new ViewHolder();
 //            convertView = View.inflate(mcontext, R.layout.item_statues, null);
@@ -121,7 +126,7 @@ public class StatusAdapter extends BaseAdapter {
         }
 
         /**为控件绑定数据*/
-        Status status = mdatas.get(position);
+        final Status status = getItem(position);
         User user = status.getUser();
 
         /**发布者头像*/
@@ -145,7 +150,7 @@ public class StatusAdapter extends BaseAdapter {
          * 加载转发微博内容
          * 调用图片加载方法加载转发微博图片
          * 运行时该段代码时程序崩溃！！！*/
-        Status retweeted_status = status.getRetweeted_status();
+        final Status retweeted_status = status.getRetweeted_status();
         if (retweeted_status == null){
             holder.include_retweeted_status.setVisibility(View.GONE);
         }else {
@@ -165,6 +170,58 @@ public class StatusAdapter extends BaseAdapter {
         holder.tv_like_bottom.setText(status.getAttitudes_count() == 0 ?
                 "赞" : status.getAttitudes_count()+"");
 
+        /**微博正文注册点击事件监听器，跳转到微博详情页面*/
+        holder.ll_card_content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mcontext, StatusDetailActivity.class);
+                intent.putExtra("status", status);
+                mcontext.startActivity(intent);
+            }
+        });
+
+        /**转发微博注册点击事件监听器，跳转到微博详情页面*/
+        holder.include_retweeted_status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mcontext, StatusDetailActivity.class);
+                intent.putExtra("status", retweeted_status);
+                mcontext.startActivity(intent);
+            }
+        });
+
+        /**操作栏转发选项注册点击事件监听器，跳转发送微博界面*/
+        holder.ll_share_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtil.show(mcontext, "转个发~", Toast.LENGTH_SHORT);
+            }
+        });
+
+        holder.ll_comment_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(status.getComments_count() > 0) {
+                    Intent intent = new Intent(mcontext, StatusDetailActivity.class);
+                    intent.putExtra("status", status);
+                    intent.putExtra("scroll2Comment", true);
+                    mcontext.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(mcontext, WriteCommentActivity.class);
+                    intent.putExtra("status", status);
+                    mcontext.startActivity(intent);
+                }
+                ToastUtil.show(mcontext, "评个论~", Toast.LENGTH_SHORT);
+            }
+        });
+
+        holder.ll_like_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtil.show(mcontext, "点个赞~", Toast.LENGTH_SHORT);
+            }
+        });
+
         return convertView;
     }
 
@@ -175,6 +232,8 @@ public class StatusAdapter extends BaseAdapter {
                            GridView gv_images, ImageView iv_image) {
         ArrayList<String> picUrls = status.getPic_urls();
         String thumbnail_pic = status.getThumbnail_pic();
+        String bmiddle_pic = status.getBmiddle_pic();
+//        String original_pic = status.getOriginal_pic();
 
         if (picUrls != null&&picUrls.size() > 1){
             imgContainer.setVisibility(View.VISIBLE);
@@ -184,6 +243,12 @@ public class StatusAdapter extends BaseAdapter {
             StatusGridImgAdapter gvAdapter = new StatusGridImgAdapter(mcontext, picUrls);
             gv_images.setOnScrollListener(new PauseOnScrollListener(imageLoader, true, true));
             gv_images.setAdapter(gvAdapter);
+//        }else if (bmiddle_pic != null){
+//            imgContainer.setVisibility(View.VISIBLE);
+//            gv_images.setVisibility(View.GONE);
+//            iv_image.setVisibility(View.VISIBLE);
+//
+//            imageLoader.displayImage(bmiddle_pic, iv_image);
         }else if (thumbnail_pic != null){
             imgContainer.setVisibility(View.VISIBLE);
             gv_images.setVisibility(View.GONE);

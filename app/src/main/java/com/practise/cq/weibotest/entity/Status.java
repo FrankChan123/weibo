@@ -4,17 +4,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by CQ on 2016/5/17 0017.
  */
-public class Status {
+public class Status implements Serializable{
     /** 微博创建时间 */
     public String created_at;
     /** 微博ID */
-    public String id;
+    public long id;
     /** 微博MID */
     public String mid;
     /** 字符串型的微博ID */
@@ -70,11 +71,11 @@ public class Status {
         this.created_at = created_at;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -265,7 +266,7 @@ public class Status {
         }
         Status status = new Status();
         status.created_at       = tempJsonObject.optString("created_at");
-        status.id               = tempJsonObject.optString("id");
+        status.id               = tempJsonObject.optLong("id");
         status.mid              = tempJsonObject.optString("mid");
         status.idstr            = tempJsonObject.optString("idstr");
         status.text             = tempJsonObject.optString("text");
@@ -328,55 +329,4 @@ public class Status {
         //status.ad = tempJsonObject.optString("ad", "");
         return statuses;
     }
-
-//    /**将JSONObject解析为Status方法*/
-//    public static Status parse(JSONObject jsonObject) throws JSONException {
-//        if (null == jsonObject) {
-//            return null;
-//        }
-//        
-//        Status status = new Status();
-//        status.created_at       = tempJsonObject.optString("created_at");
-//        status.id               = tempJsonObject.optString("id");
-//        status.mid              = tempJsonObject.optString("mid");
-//        status.idstr            = tempJsonObject.optString("idstr");
-//        status.text             = tempJsonObject.optString("text");
-//        status.source           = tempJsonObject.optString("source");
-//        status.favorited        = jsonObject.optBoolean("favorited", false);
-//        status.truncated        = jsonObject.optBoolean("truncated", false);
-//
-//        // Have NOT supported
-//        status.in_reply_to_status_id   = tempJsonObject.optString("in_reply_to_status_id");
-//        status.in_reply_to_user_id     = tempJsonObject.optString("in_reply_to_user_id");
-//        status.in_reply_to_screen_name = tempJsonObject.optString("in_reply_to_screen_name");
-//
-//        status.thumbnail_pic    = tempJsonObject.optString("thumbnail_pic");
-//        status.bmiddle_pic      = tempJsonObject.optString("bmiddle_pic");
-//        status.original_pic     = tempJsonObject.optString("original_pic");
-//        status.geo              = Geo.parse(jsonObject.optJSONObject("geo"));
-//        status.user             = User.parse(jsonObject.optJSONObject("user"));
-//        status.retweeted_status = Status.parse(jsonObject.optJSONObject("retweeted_status"));
-//        status.reposts_count    = jsonObject.optInt("reposts_count");
-//        status.comments_count   = jsonObject.optInt("comments_count");
-//        status.attitudes_count  = jsonObject.optInt("attitudes_count");
-//        status.mlevel           = jsonObject.optInt("mlevel", -1);    // Have NOT supported
-//        status.visible          = Visible.parse(jsonObject.optJSONObject("visible"));
-//
-//        JSONArray picUrlsArray = jsonObject.optJSONArray("pic_urls");
-//        if (picUrlsArray != null && picUrlsArray.length() > 0) {
-//            int length = picUrlsArray.length();
-//            status.pic_urls = new ArrayList<String>(length);
-//            JSONObject tmpObject = null;
-//            for (int ix = 0; ix < length; ix++) {
-//                tmpObject = picUrlsArray.optJSONObject(ix);
-//                if (tmpObject != null) {
-//                    status.pic_urls.add(tmpObject.optString("thumbnail_pic"));
-//                }
-//            }
-//        }
-//
-//        //status.ad = tempJsonObject.optString("ad", "");
-//
-//        return status;
-//    }
 }

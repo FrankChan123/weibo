@@ -27,7 +27,15 @@
         </activity>
 
         <activity android:name=".activity.MainActivity">
-        </activity>>
+        </activity>
+
+        <activity android:name=".activity.StatusDetailActivity">
+        </activity>
+
+        <activity android:name=".activity.WriteCommentActivity">
+        </activity>
+
+        <activity android:name=".activity.TestActivity"/>
 
     </application>
 

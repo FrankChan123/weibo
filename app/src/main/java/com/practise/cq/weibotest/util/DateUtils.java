@@ -75,9 +75,8 @@ public class DateUtils {
         return tarDayOfYear - comDayOfYear;
     }
 
-    public static String getRefreshTimeInfo(long lastFreshTime){
+    public static String getRefreshTimeInfo(long lastFreshTime, long currentTime){
         String refreshTimeInfo = null;
-        long currentTime = System.currentTimeMillis();
         long durTime = currentTime - lastFreshTime;
 
         if (durTime <= 2*ONE_MINUTE_MILLIONS){

@@ -38,6 +38,7 @@ public class HomeFragment extends BaseFragment {
     private PullToRefreshListView plv_home;
     private TextView testContentDisplay;
     private View footView;
+    private ListView lv;
 
     private StatusAdapter adapter;
     private List<Status> data;
@@ -61,6 +62,8 @@ public class HomeFragment extends BaseFragment {
         plv_home = (PullToRefreshListView) view.findViewById(R.id.plv_home);
         testContentDisplay = (TextView)view.findViewById(R.id.test_content_display);
         testContentDisplay.setMovementMethod(new ScrollingMovementMethod());
+        lv = plv_home.getRefreshableView();
+
         new TitleBarBuilder(view)
                 .setTitleText("首页");
 
@@ -77,9 +80,8 @@ public class HomeFragment extends BaseFragment {
                 /**获取上次刷新时间信息*/
                 lastRefreshTime = pf.getLong(LAST_REFRESHED_AT, 0);
                 if (lastRefreshTime != 0) {
-                    String lastRefreshInfo = DateUtils.getRefreshTimeInfo(lastRefreshTime);
+                    String lastRefreshInfo = DateUtils.getRefreshTimeInfo(lastRefreshTime, System.currentTimeMillis());
 
-                    /**显示上次刷新时间*/
                     plv_home.getLoadingLayoutProxy().setLastUpdatedLabel("上次刷新时间："+lastRefreshInfo);
                 }else {
                     plv_home.getLoadingLayoutProxy().setLastUpdatedLabel("刚刚刷新");
@@ -108,6 +110,8 @@ public class HomeFragment extends BaseFragment {
         api.statusesFriends_timeline(6, page, new RequestListener() {
             @Override
             public void onComplete(String response) {
+
+//                testContentDisplay.setText(response);
 
                 /**json数据解析测试代码，勿删！！！*/
 //                try{
@@ -161,14 +165,14 @@ public class HomeFragment extends BaseFragment {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-
-                /**刷新完成后，通知控件已经完成操作*/
-                plv_home.onRefreshComplete();
+                ToastUtil.show(activity, "数据加载成功！", Toast.LENGTH_SHORT);
 
                 /**记录本次刷新时间*/
                 lastRefreshTime = System.currentTimeMillis();
-                pf.edit().putLong(LAST_REFRESHED_AT, lastRefreshTime);
-                ToastUtil.show(activity, "数据加载成功！", Toast.LENGTH_SHORT);
+                pf.edit().putLong(LAST_REFRESHED_AT, lastRefreshTime).commit();
+
+                /**刷新完成后，通知控件已经完成操作*/
+                plv_home.onRefreshComplete();
             }
 
             @Override
@@ -187,7 +191,7 @@ public class HomeFragment extends BaseFragment {
         }
         adapter.notifyDataSetChanged();
 
-        if (currentPage <= 10){
+        if (data.size() <= 50){
             addFootView(plv_home, footView);
         }else {
             removeFootView(plv_home, footView);

@@ -2,10 +2,12 @@ package com.practise.cq.weibotest.entity;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by CQ on 2016/5/17 0017.
  */
-public class Visible {
+public class Visible implements Serializable{
 
     /** type 取值，0：普通微博，1：私密微博，3：指定分组微博，4：密友微博 */
     public int type;

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.practise.cq.weibotest.R;
+import com.practise.cq.weibotest.widget.SquareImageView;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class StatusGridImgAdapter extends BaseAdapter{
         if (convertView == null){
             holder = new ViewHolder();
             convertView = View.inflate(mcontext, R.layout.item_gridview, null);
-            holder.iv_image = (ImageView)convertView.findViewById(R.id.iv_image);
+            holder.iv_image = (SquareImageView)convertView.findViewById(R.id.iv_image);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
@@ -70,6 +70,6 @@ public class StatusGridImgAdapter extends BaseAdapter{
     }
 
     public static class ViewHolder{
-        private ImageView iv_image;
+        private SquareImageView iv_image;
     }
 }

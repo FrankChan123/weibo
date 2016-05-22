@@ -5,18 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.practise.cq.weibotest.constants.URLset;
-import com.practise.cq.weibotest.entity.Status;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.net.WeiboParameters;
 import com.sina.weibo.sdk.openapi.AbsOpenAPI;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * Created by CQ on 2016/5/17 0017.
@@ -61,6 +54,16 @@ public class WeiboApi extends AbsOpenAPI{
         super.requestAsync(url, params, httpMethod, listener);
     }
 
+
+    /**
+     * 获取当前登录用户的好友微博
+     *
+     * @param count
+     *          每页显示的条数
+     * @param page
+     *          返回的页码 第一页为最新
+     * @param listener
+     */
     public void statusesFriends_timeline(int count, int page, RequestListener listener){
         WeiboParameters parameters = new WeiboParameters(mAppKey);
         parameters.put("count", count);
@@ -70,52 +73,78 @@ public class WeiboApi extends AbsOpenAPI{
     }
 
     /**
-     * 获取当前登录用户及其所关注用户的最新微博。
+     * 根据微博ID返回某条微博的评论列表
      *
-     * @param since_id    若指定此参数，则返回ID比since_id大的微博（即比since_id时间晚的微博），默认为0
-     * @param max_id      若指定此参数，则返回ID小于或等于max_id的微博，默认为0。
-     * @param count       单页返回的记录条数，默认为50。
-     * @param page        返回结果的页码，默认为1。
-     * @param base_app    是否只获取当前应用的数据。false为否（所有数据），true为是（仅当前应用），默认为false。
-     * @param featureType 过滤类型ID，0：全部、1：原创、2：图片、3：视频、4：音乐，默认为0。
+     * @param id
+     *            需要查询的微博ID。
+     * @param page
+     *            返回结果的页码。(单页返回的记录条数，默认为50。)
+     * @param listener
+     */
+    public void commentsShow(long id, long page, RequestListener listener) {
+        WeiboParameters params = new WeiboParameters(mAppKey);
+        params.put("id", id);
+        params.put("page", page);
+        requestInMainThread(URLset.URLs.get(URLset.READ_API_SHOW), params , AbsOpenAPI.HTTPMETHOD_GET, listener);
+    }
+
+    /**
+     * 对一条微博进行评论。
      *
-     * @param trim_user   返回值中user字段开关，false：返回完整user字段、true：user字段仅返回user_id，默认为false。
+     * @param comment     评论内容，内容不超过140个汉字。
+     * @param id          需要评论的微博ID。
+//     * @param comment_ori 当评论转发微博时，是否评论给原微博
      * @param listener    异步请求回调接口
      */
-    public void friendsTimeline(int page, RequestListener listener) {
+    public void commentCreate(String comment, long id, RequestListener listener) {
         WeiboParameters params = new WeiboParameters(mAppKey);
-        params.put("page", page);
-        requestAsync(URLset.URLs.get(URLset.READ_API_FRIENDS_TIMELINE), params, HTTPMETHOD_GET, listener);
+        params.put("comment", comment);
+        params.put("id", id);
+
+        requestInMainThread(URLset.URLs.get(URLset.WRITE_API_CREATE), params , AbsOpenAPI.HTTPMETHOD_POST, listener);
     }
 
-    /**组装statusesHome_timeline的参数*/
-    private WeiboParameters buildTimeLineParamsBase(long since_id, long max_id, int count, int page,
-                                                    boolean base_app, boolean trim_user, int featureType) {
-        WeiboParameters params = new WeiboParameters(mAppKey);
-        params.put("since_id", since_id);
-        params.put("max_id", max_id);
-        params.put("count", count);
-        params.put("page", page);
-        params.put("base_app", base_app ? 1 : 0);
-        params.put("trim_user", trim_user ? 1 : 0);
-        params.put("feature", featureType);
-        return params;
-    }
 
-    /**从返回的Jason中解析出Status集合*/
-    public static ArrayList<Status> parseJsonArray(String response){
-        ArrayList<Status> statuses = new ArrayList<Status>();
-        try{
-            JSONArray jsonArray = new JSONArray(response);
-            for (int i = 0; i < jsonArray.length(); i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                statuses.add(Status.parse(jsonObject));
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        return statuses;
-    }
+
+
+
+
+
+
+
+//    /**
+//     * 获取当前登录用户及其所关注用户的最新微博。
+//     *
+//     * @param since_id    若指定此参数，则返回ID比since_id大的微博（即比since_id时间晚的微博），默认为0
+//     * @param max_id      若指定此参数，则返回ID小于或等于max_id的微博，默认为0。
+//     * @param count       单页返回的记录条数，默认为50。
+//     * @param page        返回结果的页码，默认为1。
+//     * @param base_app    是否只获取当前应用的数据。false为否（所有数据），true为是（仅当前应用），默认为false。
+//     * @param featureType 过滤类型ID，0：全部、1：原创、2：图片、3：视频、4：音乐，默认为0。
+//     *
+//     * @param trim_user   返回值中user字段开关，false：返回完整user字段、true：user字段仅返回user_id，默认为false。
+//     * @param listener    异步请求回调接口
+//     */
+//    public void friendsTimeline(int page, RequestListener listener) {
+//        WeiboParameters params = new WeiboParameters(mAppKey);
+//        params.put("page", page);
+//        requestAsync(URLset.URLs.get(URLset.READ_API_FRIENDS_TIMELINE), params, HTTPMETHOD_GET, listener);
+//    }
+//
+//    /**组装statusesHome_timeline的参数*/
+//    private WeiboParameters buildTimeLineParamsBase(long since_id, long max_id, int count, int page,
+//                                                    boolean base_app, boolean trim_user, int featureType) {
+//        WeiboParameters params = new WeiboParameters(mAppKey);
+//        params.put("since_id", since_id);
+//        params.put("max_id", max_id);
+//        params.put("count", count);
+//        params.put("page", page);
+//        params.put("base_app", base_app ? 1 : 0);
+//        params.put("trim_user", trim_user ? 1 : 0);
+//        params.put("feature", featureType);
+//        return params;
+//    }
+
 
 }
 

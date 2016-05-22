@@ -5,10 +5,12 @@ import android.text.TextUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by CQ on 2016/5/17 0017.
  */
-public class Geo {
+public class Geo implements Serializable{
 
     /** 经度坐标 */
     public String longitude;
