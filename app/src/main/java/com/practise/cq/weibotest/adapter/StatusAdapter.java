@@ -3,9 +3,11 @@ package com.practise.cq.weibotest.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -18,11 +20,15 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.practise.cq.weibotest.R;
+import com.practise.cq.weibotest.activity.ImageBrowserActivity;
 import com.practise.cq.weibotest.activity.StatusDetailActivity;
 import com.practise.cq.weibotest.activity.WriteCommentActivity;
+import com.practise.cq.weibotest.activity.WriteStatusActivity;
+import com.practise.cq.weibotest.entity.PicUrls;
 import com.practise.cq.weibotest.entity.Status;
 import com.practise.cq.weibotest.entity.User;
 import com.practise.cq.weibotest.util.DateUtils;
+import com.practise.cq.weibotest.util.StringUtils;
 import com.practise.cq.weibotest.util.ToastUtil;
 
 import java.util.ArrayList;
@@ -47,7 +53,6 @@ public class StatusAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-//        return 1;
          return mdatas.size();
     }
 
@@ -66,7 +71,6 @@ public class StatusAdapter extends BaseAdapter {
         final ViewHolder holder;
         if (convertView == null){
             holder = new ViewHolder();
-//            convertView = View.inflate(mcontext, R.layout.item_statues, null);
             convertView = LayoutInflater.from(mcontext).inflate(R.layout.item_statues, null);
 
             /**各种引用控件*/
@@ -140,7 +144,9 @@ public class StatusAdapter extends BaseAdapter {
                 + " 来自" + Html.fromHtml(status.getSource()));
 
         /**发布微博正文*/
-        holder.tv_content.setText(status.getText());
+        SpannableString weiboContent = StringUtils.getWeiboContent(mcontext, holder.tv_content,
+                status.getText());
+        holder.tv_content.setText(weiboContent);
 
         /**调用图片加载方法加载微博正文图片*/
         setImages(status, holder.include_status_image,
@@ -156,7 +162,11 @@ public class StatusAdapter extends BaseAdapter {
         }else {
             User reUser = retweeted_status.getUser();
             holder.include_retweeted_status.setVisibility(View.VISIBLE);
-            holder.tv_retweeted_content.setText("@"+reUser.getName()+":"+retweeted_status.getText());
+
+            SpannableString retweeted_content =  StringUtils.getWeiboContent(mcontext,
+                    holder.tv_retweeted_content, "@"+reUser.getName()+":"+retweeted_status.getText());
+            holder.tv_retweeted_content.setText(retweeted_content);
+
             setImages(retweeted_status, holder.include_retweeted_status_image,
                     holder.gv_retweeted_images, holder.iv_retweeted_image);
         }
@@ -194,7 +204,9 @@ public class StatusAdapter extends BaseAdapter {
         holder.ll_share_bottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtil.show(mcontext, "转个发~", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(mcontext, WriteStatusActivity.class);
+                intent.putExtra("status", status);
+                mcontext.startActivity(intent);
             }
         });
 
@@ -228,33 +240,69 @@ public class StatusAdapter extends BaseAdapter {
     /**用于加载返回数据中多图及单图的方法
      * 判断多图集合中图片url对象的数量，若不止一个，则加载到GridView中
      * 若只有一个缩略图url对象，则加载到ImageView中*/
-    private void setImages(Status status, FrameLayout imgContainer,
-                           GridView gv_images, ImageView iv_image) {
-        ArrayList<String> picUrls = status.getPic_urls();
+    private void setImages(final Status status, FrameLayout imgContainer,
+                           GridView gv_images, final ImageView iv_image) {
+        ArrayList<String> pic_urls = status.getPic_urls();
+        ArrayList<PicUrls> picUrls = status.getPicUrls();
+
         String thumbnail_pic = status.getThumbnail_pic();
         String bmiddle_pic = status.getBmiddle_pic();
-//        String original_pic = status.getOriginal_pic();
 
-        if (picUrls != null&&picUrls.size() > 1){
+        /**多图url不为空，加载多图
+         * 否则，加载单图*/
+        if (pic_urls != null && pic_urls.size() > 1){
             imgContainer.setVisibility(View.VISIBLE);
             gv_images.setVisibility(View.VISIBLE);
             iv_image.setVisibility(View.GONE);
 
             StatusGridImgAdapter gvAdapter = new StatusGridImgAdapter(mcontext, picUrls);
+
+            /**自定义LruCache+AsyncTask加载图片
+             * 实际加载速度较慢，备用*/
+//            ImagesWallAdapter wallAdapter = new ImagesWallAdapter(mcontext, 0,
+//                    picUrls.toArray(new String[picUrls.size()]), gv_images);
+
             gv_images.setOnScrollListener(new PauseOnScrollListener(imageLoader, true, true));
             gv_images.setAdapter(gvAdapter);
-//        }else if (bmiddle_pic != null){
-//            imgContainer.setVisibility(View.VISIBLE);
-//            gv_images.setVisibility(View.GONE);
-//            iv_image.setVisibility(View.VISIBLE);
-//
-//            imageLoader.displayImage(bmiddle_pic, iv_image);
+
+            gv_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Intent intent = new Intent(mcontext, ImageBrowserActivity.class);
+                    intent.putExtra("status", status);
+                    intent.putExtra("position", position);
+                    mcontext.startActivity(intent);
+                }
+            });
+        }else if (bmiddle_pic != null){
+            imgContainer.setVisibility(View.VISIBLE);
+            gv_images.setVisibility(View.GONE);
+            iv_image.setVisibility(View.VISIBLE);
+
+            imageLoader.displayImage(bmiddle_pic, iv_image);
+            iv_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mcontext, ImageBrowserActivity.class);
+                    intent.putExtra("status", status);
+                    mcontext.startActivity(intent);
+                }
+            });
         }else if (thumbnail_pic != null){
             imgContainer.setVisibility(View.VISIBLE);
             gv_images.setVisibility(View.GONE);
             iv_image.setVisibility(View.VISIBLE);
 
+
             imageLoader.displayImage(thumbnail_pic, iv_image);
+            iv_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mcontext, ImageBrowserActivity.class);
+                    intent.putExtra("status", status);
+                    mcontext.startActivity(intent);
+                }
+            });
         }else {
             imgContainer.setVisibility(View.GONE);
         }

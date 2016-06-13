@@ -8,11 +8,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.practise.cq.weibotest.R;
 import com.practise.cq.weibotest.base.BaseActivity;
-import com.practise.cq.weibotest.util.TitleBarBuilder;
 import com.practise.cq.weibotest.constants.AccessTokenKeeper;
 import com.practise.cq.weibotest.constants.Constants;
-import com.practise.cq.weibotest.R;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
@@ -41,7 +40,6 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-        new TitleBarBuilder(this).setTitleBarEnable(false);
         mTokenText = (TextView)findViewById(R.id.token_text_view);
 
         /**

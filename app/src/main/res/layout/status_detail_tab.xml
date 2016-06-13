@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <RadioGroup
         android:id="@+id/rg_status_detail"
@@ -26,5 +27,11 @@
             style="@style/RadioButtonStatusDetailTab"
             android:text="赞" />
     </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bg_gray_dark" />
 
 </LinearLayout>

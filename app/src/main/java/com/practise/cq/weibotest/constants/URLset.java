@@ -22,6 +22,9 @@ public class URLset {
     public static final int READ_API_TIMELINE        = 9;
     public static final int WRITE_API_CREATE        = 10;
 
+    public static final int API_USER_SHOW            =11;
+    public static final int READ_API_USER_TIMELINE   =12;
+
 
 
 
@@ -29,18 +32,21 @@ public class URLset {
     public static SparseArray<String> URLs = new SparseArray<String>();
     
     static {
-        URLs.put(READ_API_FRIENDS_TIMELINE,    BASE_URL + "/statuses/friends_timeline.json");
+        URLs.put(READ_API_FRIENDS_TIMELINE,    BASE_URL + "/statuses/home_timeline.json");
         URLs.put(READ_API_MENTIONS,         BASE_URL + "/statuses/mentions.json");
         URLs.put(WRITE_API_REPOST,          BASE_URL + "/statuses/repost.json");
         URLs.put(WRITE_API_UPDATE,          BASE_URL + "/statuses/update.json");
         URLs.put(WRITE_API_UPLOAD,          BASE_URL + "/statuses/upload.json");
         URLs.put(WRITE_API_UPLOAD_URL_TEXT, BASE_URL + "/statuses/upload_url_text.json");
+        URLs.put(READ_API_USER_TIMELINE, BASE_URL + "/statuses/user_timeline.json");
 
         URLs.put(READ_API_TO_ME, BASE_URL + "/comments/to_me.json");
         URLs.put(READ_API_BY_ME , BASE_URL + "/comments/by_me.json");
         URLs.put(READ_API_SHOW, BASE_URL + "/comments/show.json");
         URLs.put(READ_API_TIMELINE, BASE_URL + "/comments/timeline.json");
         URLs.put(WRITE_API_CREATE , BASE_URL + "/comments/create.json");
+
+        URLs.put(API_USER_SHOW, BASE_URL + "/users/show.json");
 
     }
 

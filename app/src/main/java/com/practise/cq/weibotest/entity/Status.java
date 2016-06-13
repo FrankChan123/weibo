@@ -63,6 +63,16 @@ public class Status implements Serializable{
     /** 微博配图地址。多图时返回多图链接。无配图返回"[]" */
     public ArrayList<String> pic_urls;
 
+    public ArrayList<PicUrls> picUrls;
+
+    public ArrayList<PicUrls> getPicUrls() {
+        return picUrls;
+    }
+
+    public void setPicUrls(ArrayList<PicUrls> picUrls) {
+        this.picUrls = picUrls;
+    }
+
     public String getCreated_at() {
         return created_at;
     }
@@ -295,14 +305,24 @@ public class Status implements Serializable{
         if (picUrlsArray != null && picUrlsArray.length() > 0) {
             int length4pic = picUrlsArray.length();
             status.pic_urls = new ArrayList<String>(length4pic);
+            status.picUrls = new ArrayList<PicUrls>(length4pic);
             JSONObject tmpObject = null;
             for (int ix = 0; ix < length4pic; ix++) {
                 tmpObject = picUrlsArray.optJSONObject(ix);
                 if (tmpObject != null) {
                     status.pic_urls.add(tmpObject.optString("thumbnail_pic"));
+                    PicUrls picUrls = new PicUrls();
+                    picUrls.setThumbnail_pic(tmpObject.optString("thumbnail_pic"));
+                    status.picUrls.add(picUrls);
                 }
             }
+//        }else {
+//            PicUrls picUrls = new PicUrls();
+//            picUrls.setThumbnail_pic(tempJsonObject.optString("thumbnail_pic"));
+//            status.picUrls.add(picUrls);
         }
+
+
 
         return status;
     }

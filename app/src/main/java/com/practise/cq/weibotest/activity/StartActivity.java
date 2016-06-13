@@ -7,7 +7,6 @@ import android.os.Message;
 
 import com.practise.cq.weibotest.R;
 import com.practise.cq.weibotest.base.BaseActivity;
-import com.practise.cq.weibotest.util.TitleBarBuilder;
 import com.practise.cq.weibotest.constants.AccessTokenKeeper;
 import com.practise.cq.weibotest.constants.CommonContants;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -42,7 +41,6 @@ public class StartActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
-        new TitleBarBuilder(this).setTitleBarEnable(false);
 
         mAccessToken = AccessTokenKeeper.readAccessToken(this);
         if (mAccessToken.isSessionValid()){

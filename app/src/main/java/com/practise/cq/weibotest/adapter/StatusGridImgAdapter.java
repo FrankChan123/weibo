@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.practise.cq.weibotest.R;
+import com.practise.cq.weibotest.entity.PicUrls;
 import com.practise.cq.weibotest.widget.SquareImageView;
 
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 public class StatusGridImgAdapter extends BaseAdapter{
 
     private Context mcontext;
-    private ArrayList<String> mpicurls;
+    private ArrayList<PicUrls> mpicurls;
     private ImageLoader imageLoader;
 
-    public StatusGridImgAdapter(Context context, ArrayList<String> picUrls) {
+    public StatusGridImgAdapter(Context context, ArrayList<PicUrls> picUrls) {
         mcontext = context;
         mpicurls = picUrls;
         imageLoader = ImageLoader.getInstance();
@@ -32,7 +33,7 @@ public class StatusGridImgAdapter extends BaseAdapter{
     }
 
     @Override
-    public String getItem(int position) {
+    public PicUrls getItem(int position) {
         return mpicurls.get(position);
     }
 
@@ -53,7 +54,7 @@ public class StatusGridImgAdapter extends BaseAdapter{
             holder = (ViewHolder) convertView.getTag();
         }
 
-        /**设置item宽高*/
+//        /**设置item宽高*/
 //        GridView gv = (GridView)parent;
 //        int horizontalSpacing = gv.getHorizontalSpacing();
 //        int columns = gv.getNumColumns();
@@ -63,8 +64,8 @@ public class StatusGridImgAdapter extends BaseAdapter{
 //        holder.iv_image.setLayoutParams(params);
 
         /**将图片加载到item的ImageView上*/
-        String picUrl = mpicurls.get(position);
-        imageLoader.displayImage(picUrl, holder.iv_image);
+        PicUrls picUrl = getItem(position);
+        imageLoader.displayImage(picUrl.getBmiddle_pic(), holder.iv_image);
 
         return convertView;
     }

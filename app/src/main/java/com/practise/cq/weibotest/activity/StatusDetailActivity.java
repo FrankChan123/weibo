@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -29,17 +31,18 @@ import com.practise.cq.weibotest.base.BaseActivity;
 import com.practise.cq.weibotest.constants.AccessTokenKeeper;
 import com.practise.cq.weibotest.constants.Constants;
 import com.practise.cq.weibotest.entity.Comment;
+import com.practise.cq.weibotest.entity.CommentResponse;
+import com.practise.cq.weibotest.entity.PicUrls;
 import com.practise.cq.weibotest.entity.Status;
 import com.practise.cq.weibotest.entity.User;
 import com.practise.cq.weibotest.util.DateUtils;
 import com.practise.cq.weibotest.util.ImageOptionHelper;
+import com.practise.cq.weibotest.util.StringUtils;
 import com.practise.cq.weibotest.util.TitleBarBuilder;
 import com.practise.cq.weibotest.util.ToastUtil;
 import com.practise.cq.weibotest.widget.WrapHeightGridView;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -296,7 +299,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
             tv_content.setVisibility(View.GONE);
         } else {
             tv_content.setVisibility(View.VISIBLE);
-            tv_content.setText(status.getText());
+            tv_content.setText(StringUtils.getWeiboContent(this, tv_content, status.getText()));
         }
 
 
@@ -306,7 +309,8 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
             include_retweeted_status.setVisibility(View.VISIBLE);
             String retweetContent = "@" + retweetedStatus.getUser().getName()
                     + ":" + retweetedStatus.getText();
-            tv_retweeted_content.setText(retweetContent);
+            tv_retweeted_content.setText(StringUtils.getWeiboContent(this, tv_retweeted_content,
+                    retweetContent));
             setImages(retweetedStatus, fl_retweeted_imageview,
                     gv_retweeted_images, iv_retweeted_image);
         }else {
@@ -338,22 +342,42 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
             return;
         }
 
-        ArrayList<String> picUrls = status.getPic_urls();
+        ArrayList<String> pic_urls = status.getPic_urls();
+        ArrayList<PicUrls> picUrls = status.getPicUrls();
+
         String picUrl = status.getBmiddle_pic();
 
-        if (picUrls != null && picUrls.size() == 1){
+        if (pic_urls != null && pic_urls.size() == 1){
             vgContainer.setVisibility(View.VISIBLE);
             gvImgs.setVisibility(View.GONE);
             ivImg.setVisibility(View.VISIBLE);
 
             imageLoader.displayImage(picUrl, ivImg);
-        }else if (picUrls != null && picUrls.size() > 1){
+            ivImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(StatusDetailActivity.this, ImageBrowserActivity.class);
+                    intent.putExtra("status", status);
+                    startActivity(intent);
+                }
+            });
+        }else if (pic_urls != null && pic_urls.size() > 1){
             vgContainer.setVisibility(View.VISIBLE);
             gvImgs.setVisibility(View.VISIBLE);
             ivImg.setVisibility(View.GONE);
 
             StatusGridImgAdapter imagesAdapter = new StatusGridImgAdapter(this, picUrls);
             gvImgs.setAdapter(imagesAdapter);
+
+            gvImgs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Intent intent = new Intent(StatusDetailActivity.this, ImageBrowserActivity.class);
+                    intent.putExtra("status", status);
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                }
+            });
         }else {
             vgContainer.setVisibility(View.GONE);
         }
@@ -369,21 +393,23 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
                 if (page == 1){
                     datas.clear();
                 }
-                currentPage = page;
 
-                try{
-                    List<Comment> comments = Comment.parse2List(response);
-                    tv_comment_bottom.setText(comments.size() == 0 ?
-                            "评论" : comments.size() + "");
-                    shadow_rb_comments.setText("评论 " + comments.size());
-                    rb_comments.setText("评论 " + comments.size());
+                Gson gson = new Gson();
+                CommentResponse commentResponse = gson.fromJson(response, CommentResponse.class);
+                tv_comment_bottom.setText(commentResponse.getTotal_number() == 0 ?
+                        "评论" : commentResponse.getTotal_number() + "");
+                shadow_rb_comments.setText("评论 " + commentResponse.getTotal_number());
+                rb_comments.setText("评论 " + commentResponse.getTotal_number());
+                addData(commentResponse);
 
-                    /**数据加入到适配器数据容器中*/
-                    addData(comments);
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
+//                try{
+//                    List<Comment> comments = Comment.parse2List(response);
+//                    commentResponse.setComments(comments);
+//                    /**数据加入到适配器数据容器中*/
+//                    addData(commentResponse);
+//                }catch (JSONException e){
+//                    e.printStackTrace();
+//                }
 
                 /**判断是否需要滚动至评论部分*/
                 if(scroll2comment) {
@@ -404,10 +430,14 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-    private void addData(List<Comment> comments) {
+    private void addData(CommentResponse response) {
+//        if (comments.size() == 0){
+//            ToastUtil.show(this, "还没有人评论~~", Toast.LENGTH_LONG);
+//            return;
+//        }
 
         /**将获取到的数据添加至列表中,重复数据不添加*/
-        for (Comment comment : comments) {
+        for (Comment comment : response.getComments()) {
             if (!datas.contains(comment)) {
                 datas.add(comment);
             }
@@ -418,7 +448,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
 
         /**用条数判断,当前评论数是否达到指定评论数
          * 未达到则添加更多加载footView,反之移除*/
-        if (datas.size() < 100) {
+        if (datas.size() < response.getTotal_number()) {
             addFootView(plv_status_detail, footView);
         } else {
             removeFootView(plv_status_detail, footView);
@@ -484,8 +514,8 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
                 case REQUEST_CODE_SEND_COMMENT:
                     boolean sendSuccess = getIntent().getBooleanExtra("sendSuccess", false);
                     if (sendSuccess){
-                        loadData(1);
                         scroll2comment = true;
+                        loadData(1);
                     }
                     break;
                 default:

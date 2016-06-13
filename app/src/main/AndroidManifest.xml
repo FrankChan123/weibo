@@ -35,7 +35,14 @@
         <activity android:name=".activity.WriteCommentActivity">
         </activity>
 
-        <activity android:name=".activity.TestActivity"/>
+        <activity android:name=".activity.WriteStatusActivity">
+        </activity>
+
+        <activity android:name=".activity.ImageBrowserActivity">
+        </activity>
+
+        <activity android:name=".activity.TestActivity">
+        </activity>
 
     </application>
 

@@ -16,12 +16,12 @@ public class ImageOptionHelper {
                 .cacheOnDisk(true)
                 .cacheInMemory(true)
                 /*图片的颜色类型*/
-                .bitmapConfig(Bitmap.Config.RGB_565)
+                .bitmapConfig(Bitmap.Config.ARGB_4444)
 //                .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                 /*加载时对应图片*/
-                .showImageOnLoading(R.mipmap.timeline_image_loading)
+                .showImageOnLoading(R.mipmap.timeline_image_failure)
                 /*空地址对应图片*/
-                .showImageForEmptyUri(R.mipmap.timeline_image_loading)
+                .showImageForEmptyUri(R.mipmap.timeline_image_failure)
                 /*加载失败对应图片*/
                 .showImageOnFail(R.mipmap.timeline_image_failure)
                 .build();

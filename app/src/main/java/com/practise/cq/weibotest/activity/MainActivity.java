@@ -1,17 +1,15 @@
 package com.practise.cq.weibotest.activity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.practise.cq.weibotest.R;
 import com.practise.cq.weibotest.base.BaseActivity;
 import com.practise.cq.weibotest.fragment.FragmentController;
-import com.practise.cq.weibotest.util.TitleBarBuilder;
-import com.practise.cq.weibotest.util.ToastUtil;
 
 /**
  * Created by CQ on 2016/5/15 0015.
@@ -27,7 +25,6 @@ public class MainActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        new TitleBarBuilder(this).setTitleBarEnable(false);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         controller = FragmentController.getInstance(this, R.id.fl_content);
@@ -70,7 +67,8 @@ public class MainActivity extends BaseActivity implements
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_add:
-                ToastUtil.show(this, "发送一条微博！", Toast.LENGTH_LONG);
+                Intent intent = new Intent(MainActivity.this, WriteStatusActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

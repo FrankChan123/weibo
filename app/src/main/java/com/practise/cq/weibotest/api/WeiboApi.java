@@ -1,8 +1,10 @@
 package com.practise.cq.weibotest.api;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.practise.cq.weibotest.constants.URLset;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -104,13 +106,81 @@ public class WeiboApi extends AbsOpenAPI{
         requestInMainThread(URLset.URLs.get(URLset.WRITE_API_CREATE), params , AbsOpenAPI.HTTPMETHOD_POST, listener);
     }
 
+    /**
+     * 发布或转发一条微博
+     *
+     * @param status
+     *            要发布的微博文本内容。
+     * @param bitmap
+     *            要上传的图片(为空则代表发布无图微博)。
+     * @param retweetedStatsId
+     *            要转发的微博ID(<=0时为原创微博)。
+     * @param listener
+     */
+    public void sendStatus(String status, Bitmap bitmap, long retweetedStatsId, RequestListener listener) {
+        String url;
+        WeiboParameters params = new WeiboParameters(mAppKey);
+        params.put("status", status);
+        if(retweetedStatsId > 0) {
+            /**如果是转发微博,设置被转发者的id*/
+            params.put("id", retweetedStatsId);
+            url = URLset.URLs.get(URLset.WRITE_API_REPOST);
+        } else if(bitmap != null) {
+            /**如果有图片,则调用upload接口且设置图片路径*/
+            params.put("pic", bitmap);
+            url = URLset.URLs.get(URLset.WRITE_API_UPLOAD);
+        } else {
+            /**如果无图片,则调用update接口*/
+            url = URLset.URLs.get(URLset.WRITE_API_UPDATE);
+        }
+        requestInMainThread(url, params, AbsOpenAPI.HTTPMETHOD_POST, listener);
+    }
 
+    /**
+     * 查询登录用户的信息
+     *
+     * @param uid
+     *      用户id
+     * @param screen_name
+     *      用户昵称
+     * @param listener
+     *
+     * */
+    public void userShow(String uid, String screen_name, RequestListener listener){
+        WeiboParameters parameters = new WeiboParameters(mAppKey);
+        if (!TextUtils.isEmpty(uid)){
+            parameters.put("uid", uid);
+        }else if (!TextUtils.isEmpty(screen_name)){
+            parameters.put("screenName", screen_name);
+        }
 
+        requestInMainThread(URLset.URLs.get(URLset.API_USER_SHOW), parameters,
+                AbsOpenAPI.HTTPMETHOD_GET, listener);
+    }
 
-
-
-
-
+    /**
+     * 查询登录用户的微博列表
+     *
+     * @param id
+     *      用户id
+     * @param screen_name
+     *      用户昵称
+     * @param page
+     *      查询返回页
+     * @param listener
+     *
+     * */
+    public void statusUser_timeline(long id, String screen_name, long page, RequestListener listener){
+        WeiboParameters params = new WeiboParameters(mAppKey);
+        if (id > 0){
+            params.put("id", id);
+        }else if (!TextUtils.isEmpty(screen_name)){
+            params.put("screen_name", screen_name);
+        }
+        params.put("page", page);
+        requestInMainThread(URLset.URLs.get(URLset.READ_API_USER_TIMELINE), params,
+                AbsOpenAPI.HTTPMETHOD_GET, listener);
+    }
 
 //    /**
 //     * 获取当前登录用户及其所关注用户的最新微博。

@@ -22,6 +22,7 @@
             android:id="@+id/status_detail_tab"
             layout="@layout/status_detail_tab"
             android:visibility="gone" />
+
     </RelativeLayout>
 
     <include

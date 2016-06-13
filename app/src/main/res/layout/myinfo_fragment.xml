@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/bg_gray">
 
-    <include layout="@layout/titlebar"/>
+    <ImageView
+        android:id="@+id/iv_user_info_head"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/beauty"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.practise.cq.weibotest.widget.Pull2RefreshListView
+        android:id="@+id/plv_user_info"
+        style="@style/ListViewCommon">
+
+    </com.practise.cq.weibotest.widget.Pull2RefreshListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/tab_myInfo"/>
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/titlebar"
+            android:background="@color/transparent"/>
+
+        <include
+            android:id="@+id/user_info_tab"
+            layout="@layout/user_info_tab"
+            android:visibility="gone"/>
+    </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

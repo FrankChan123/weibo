@@ -105,13 +105,7 @@ public class TitleBarBuilder {
         return this;
     }
 
-
-    public void setTitleBarEnable(boolean isTitleBarEnable){
-        if (isTitleBarEnable == true){
-            titleBar.setVisibility(View.VISIBLE);
-        }else{
-            titleBar.setVisibility(View.GONE);
-        }
+    public View build(){
+        return titleBar;
     }
-
 }

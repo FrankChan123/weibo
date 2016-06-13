@@ -14,6 +14,7 @@ import com.practise.cq.weibotest.R;
 import com.practise.cq.weibotest.entity.Comment;
 import com.practise.cq.weibotest.entity.User;
 import com.practise.cq.weibotest.util.DateUtils;
+import com.practise.cq.weibotest.util.StringUtils;
 import com.practise.cq.weibotest.util.ToastUtil;
 
 import java.util.List;
@@ -77,7 +78,7 @@ public class StatusCommentAdapter extends BaseAdapter{
             imageLoader.displayImage(user.getProfile_image_url(), holder.iv_avatar);
             holder.tv_subhead.setText(user.getName());
             holder.tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
-            holder.tv_comment.setText(comment.getText());
+            holder.tv_comment.setText(StringUtils.getWeiboContent(context, holder.tv_comment, comment.getText()));
 
             /**点击评论*/
             holder.ll_comments.setOnClickListener(new View.OnClickListener() {

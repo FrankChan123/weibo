@@ -169,7 +169,7 @@ public class HomeFragment extends BaseFragment {
 
                 /**记录本次刷新时间*/
                 lastRefreshTime = System.currentTimeMillis();
-                pf.edit().putLong(LAST_REFRESHED_AT, lastRefreshTime).commit();
+                pf.edit().putLong(LAST_REFRESHED_AT, lastRefreshTime).apply();
 
                 /**刷新完成后，通知控件已经完成操作*/
                 plv_home.onRefreshComplete();
@@ -183,15 +183,15 @@ public class HomeFragment extends BaseFragment {
     }
 
     /**将网络请求返回的Jason数据解析后，添加到集合中，并通知适配器更新*/
-    private void addData(List<Status> statuses){
-        for (Status status : statuses){
+    private void addData(List<Status> response){
+        for (Status status : response){
             if (!data.contains(status)){
                 data.add(status);
             }
         }
         adapter.notifyDataSetChanged();
 
-        if (data.size() <= 50){
+        if (currentPage <= 50){
             addFootView(plv_home, footView);
         }else {
             removeFootView(plv_home, footView);
